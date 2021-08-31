@@ -8,14 +8,21 @@
     pattern: ['gulp-*', 'gulp.*', 'del', '@jswork/gulp-*']
   });
 
-  const strip = (x) => x.substr(0, x.lastIndexOf('.'));
+  const strip = (x) => {
+    var str = x.substr(0, x.lastIndexOf('.'));
+    return str.includes('.') ? strip(str) : str;
+  };
 
   const buildConstant = (role, pattern, dir) => {
     const files = globby.sync(pattern, { cwd: `node_modules/highlight.js${dir}` }).map(strip);
-    console.log(files);
     const list = JSON.stringify(files, null, 2);
-    fs.writeFileSync(`./src/${role}.ts`, `export const ${role} = ${list}`);
+    fs.writeFileSync(`./src/constants.ts`, `export const ${role} = ${list}; \n\n`, { flag: 'a+' });
   };
+
+  gulp.task('build:prepare', function () {
+    fs.writeFileSync('./src/constants.ts', '');
+    return gulp.src('.', { allowEmpty: true });
+  });
 
   gulp.task('build:styles', function () {
     buildConstant('styles', '**/*.css', '/styles');
@@ -23,9 +30,9 @@
   });
 
   gulp.task('build:languages', function () {
-    buildConstant('languages', '**/*.js', '/lib/languages');
+    buildConstant('languages', '**/*.js.js', '/lib/languages');
     return gulp.src('.', { allowEmpty: true });
   });
 
-  gulp.task('build', gulp.series(['build:styles', 'build:styles']));
+  gulp.task('build', gulp.series(['build:prepare', 'build:styles', 'build:languages']));
 })();

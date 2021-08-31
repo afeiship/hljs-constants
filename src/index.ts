@@ -1,4 +1,3 @@
-import { styles } from './styles';
-import { languages } from './languages';
+import { styles, languages } from './constants';
 
 export { styles, languages };
