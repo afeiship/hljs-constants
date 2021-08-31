@@ -13,9 +13,32 @@ npm install @jswork/hljs-constants
 
 ## usage
 ```js
-import hljsConstants from '@jswork/hljs-constants';
+import { styles, languages } from '@jswork/hljs-constants';
 
-// usage goes here.
+// styles
+[
+  "a11y-dark",
+  "a11y-light",
+  "agate",
+  "an-old-hope",
+  "androidstudio",
+  "arduino-light",
+  "arta",
+  // ....
+]
+
+// languages
+[
+  "1c",
+  "abnf",
+  "accesslog",
+  "actionscript",
+  "ada",
+  "angelscript",
+  "apache",
+  "applescript",
+  // ...
+]
 ```
 
 ## license
