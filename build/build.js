@@ -4,14 +4,12 @@
   const gulp = require('gulp');
   const globby = require('globby');
   const fs = require('fs');
+  const stripExtname = require('@jswork/strip-extname').default;
   const $ = require('gulp-load-plugins')({
     pattern: ['gulp-*', 'gulp.*', 'del', '@jswork/gulp-*']
   });
 
-  const strip = (x) => {
-    var str = x.substr(0, x.lastIndexOf('.'));
-    return str.includes('.') ? strip(str) : str;
-  };
+  const strip = (item) => stripExtname(item, true);
 
   const buildConstant = (role, pattern, dir) => {
     const files = globby.sync(pattern, { cwd: `node_modules/highlight.js${dir}` }).map(strip);
