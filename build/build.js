@@ -1,35 +1,29 @@
-// https://github.com/shelljs/shelljs
-require('./check-versions')();
-require('shelljs/global');
-env.NODE_ENV = 'production';
+(function () {
+  'use strict';
 
-var path = require('path');
-var config = require('../config');
-var ora = require('ora');
-var webpack = require('webpack');
-var webpackConfig = require('./webpack.prod.conf');
+  const gulp = require('gulp');
+  const globby = require('globby');
+  const fs = require('fs');
+  const $ = require('gulp-load-plugins')({
+    pattern: ['gulp-*', 'gulp.*', 'del', '@jswork/gulp-*']
+  });
 
-console.log(
-  '  Tip:\n' +
-  '  Built files are meant to be served over an HTTP server.\n' +
-  '  Opening index.html over file:// won\'t work.\n'
-);
+  const buildConstant = (role, pattern, dir) => {
+    const files = globby.sync(pattern, { cwd: `node_modules/highlight.js${dir}` });
+    console.log('fiels:', files);
+    const list = JSON.stringify(files, null, 2);
+    fs.writeFileSync(`./src/${role}.ts`, `export const ${role} = ${list}`);
+  };
 
-var spinner = ora('building for production...');
-spinner.start();
+  gulp.task('build:styles', function () {
+    buildConstant('styles', '**/*.css', '/styles');
+    return gulp.src('.', { allowEmpty: true });
+  });
 
-var assetsPath = path.join(config.build.assetsRoot);
-rm('-rf', assetsPath);
-mkdir('-p', assetsPath);
+  gulp.task('build:languages', function () {
+    buildConstant('languages', '**/*.js', '/lib/languages');
+    return gulp.src('.', { allowEmpty: true });
+  });
 
-webpack(webpackConfig, function (err, stats) {
-  spinner.stop()
-  if (err) throw err
-  process.stdout.write(stats.toString({
-    colors: true,
-    modules: false,
-    children: false,
-    chunks: false,
-    chunkModules: false
-  }) + '\n')
-})
+  gulp.task('build', gulp.series(['build:styles', 'build:styles']));
+})();
