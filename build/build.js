@@ -8,9 +8,11 @@
     pattern: ['gulp-*', 'gulp.*', 'del', '@jswork/gulp-*']
   });
 
+  const strip = (x) => x.substr(0, x.lastIndexOf('.'));
+
   const buildConstant = (role, pattern, dir) => {
-    const files = globby.sync(pattern, { cwd: `node_modules/highlight.js${dir}` });
-    console.log('fiels:', files);
+    const files = globby.sync(pattern, { cwd: `node_modules/highlight.js${dir}` }).map(strip);
+    console.log(files);
     const list = JSON.stringify(files, null, 2);
     fs.writeFileSync(`./src/${role}.ts`, `export const ${role} = ${list}`);
   };
